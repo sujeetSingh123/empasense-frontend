@@ -9,6 +9,11 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import EmpathyTracking from "./pages/EmpathyTracking";
+import Users from "./pages/Users";
+import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
+import AudioRecording from "./pages/AudioRecording";
+import EmpathyScoreBoard from "./pages/EmpathyScoreBoard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +31,11 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/empathy-tracking" element={<EmpathyTracking />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/audio-recording" element={<AudioRecording />} />
+          <Route path="/empathy-scoreboard" element={<EmpathyScoreBoard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
