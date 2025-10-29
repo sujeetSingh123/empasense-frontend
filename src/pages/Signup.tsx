@@ -35,7 +35,7 @@ export default function Signup() {
     setTimeout(() => {
       toast({
         title: "Account created!",
-        description: "Welcome to EmpathyHub. Redirecting to dashboard...",
+        description: "Welcome to EmpathyTrack. Redirecting to dashboard...",
       });
       navigate("/dashboard");
       setIsLoading(false);
@@ -57,7 +57,7 @@ export default function Signup() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
                 <Heart className="h-6 w-6" />
               </div>
-              <span className="text-3xl font-bold">EmpathyHub</span>
+              <span className="text-3xl font-bold">EmpathyTrack</span>
             </div>
             <h2 className="mb-4 text-4xl font-bold text-center">Start Your Journey</h2>
             <p className="max-w-md text-center text-lg text-white/90">
@@ -77,7 +77,7 @@ export default function Signup() {
             </div>
             <CardTitle className="text-2xl text-center">Create an account</CardTitle>
             <CardDescription className="text-center">
-              Enter your details to get started with EmpathyHub
+              Enter your details to get started with EmpathyTrack
             </CardDescription>
           </CardHeader>
           <CardContent>

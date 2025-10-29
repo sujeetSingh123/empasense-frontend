@@ -50,7 +50,7 @@ export function DashboardHeader() {
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium">Admin User</p>
-                <p className="text-xs text-muted-foreground">admin@empathyhub.com</p>
+                <p className="text-xs text-muted-foreground">admin@EmpathyTrack.com</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

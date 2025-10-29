@@ -45,7 +45,7 @@ export default function Login() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
                 <Heart className="h-6 w-6" />
               </div>
-              <span className="text-3xl font-bold">EmpathyHub</span>
+              <span className="text-3xl font-bold">EmpathyTrack</span>
             </div>
             <h2 className="mb-4 text-4xl font-bold text-center">Track Empathy, Build Connections</h2>
             <p className="max-w-md text-center text-lg text-white/90">
@@ -75,7 +75,7 @@ export default function Login() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@empathyhub.com"
+                  placeholder="admin@EmpathyTrack.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required

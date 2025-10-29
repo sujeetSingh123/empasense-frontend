@@ -44,7 +44,7 @@ export function DashboardSidebar() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary-hover">
                 <Heart className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="text-lg font-semibold">EmpathyHub</span>
+              <span className="text-lg font-semibold">EmpathyTrack</span>
             </div>
           )}
           {collapsed && (
