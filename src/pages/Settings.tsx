@@ -52,7 +52,7 @@ export default function Settings() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" defaultValue="admin@EmpathyTrack.com" />
+                  <Input id="email" type="email" defaultValue="admin@EmpaSense.com" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
