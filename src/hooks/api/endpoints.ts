@@ -9,9 +9,9 @@ export const resetPassword = "/auth/reset-password";
 export const refreshToken = "auth/refresh-token";
 
 // Users & roles
-export const rolesEndpoint = "/roles";
-export const usersEndpoint = "/users";
-export const currentUserEndpoint = "/users/me";
+export const rolesEndpoint = "/roles/";
+export const usersEndpoint = "/users/";
+export const currentUserEndpoint = "/auth/me";
 
 // Auth / profile
 export const changePasswordEndpoint = "/auth/change-password";

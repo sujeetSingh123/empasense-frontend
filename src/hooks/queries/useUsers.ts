@@ -18,8 +18,8 @@ export function useUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const res = await http.get<User[]>(usersEndpoint);
-        return res.data;
+        // const res = await http.get<User[]>(usersEndpoint);
+        return [];
       } catch (error: unknown) {
         const message = getErrorMessage(error);
         throw new Error(message || "Unable to fetch users");

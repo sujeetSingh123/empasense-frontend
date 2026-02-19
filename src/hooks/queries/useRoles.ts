@@ -13,8 +13,8 @@ export function useRoles() {
     queryKey: ["roles"],
     queryFn: async () => {
       try {
-        const res = await http.get<Role[]>(rolesEndpoint);
-        return res.data;
+        // const res = await http.get<Role[]>(rolesEndpoint);
+        return [];
       } catch (error: unknown) {
         const message = getErrorMessage(error);
         throw new Error(message || "Unable to fetch roles");
