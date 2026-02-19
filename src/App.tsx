@@ -14,6 +14,7 @@ import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import AudioRecording from "./pages/AudioRecording";
 import EmpathyScoreBoard from "./pages/EmpathyScoreBoard";
+import Models from "./pages/Models";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="/audio-recording" element={<AudioRecording />} />
           <Route path="/empathy-scoreboard" element={<EmpathyScoreBoard />} />
+          <Route path="/models" element={<Models />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
