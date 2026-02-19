@@ -7,9 +7,24 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel as FormFieldLabel, FormMessage } from "@/components/ui/form";
+import { changePasswordSchema, type ChangePasswordInput, useChangePassword } from "@/hooks/mutations/useChangePassword";
 
 export default function Settings() {
   const { toast } = useToast();
+
+  const changePassword = useChangePassword();
+
+  const passwordForm = useForm<ChangePasswordInput>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
 
   const handleSave = () => {
     toast({
@@ -68,19 +83,78 @@ export default function Settings() {
                 <CardDescription>Update your password</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="currentPassword">Current Password</Label>
-                  <Input id="currentPassword" type="password" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">New Password</Label>
-                  <Input id="newPassword" type="password" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input id="confirmPassword" type="password" />
-                </div>
-                <Button onClick={handleSave}>Update Password</Button>
+                <Form {...passwordForm}>
+                  <form
+                    onSubmit={passwordForm.handleSubmit((values) => {
+                      changePassword.mutate(values, {
+                        onSuccess: () => {
+                          toast({
+                            title: "Password updated",
+                            description: "Your password has been changed successfully.",
+                          });
+                          passwordForm.reset();
+                        },
+                        onError: (error) => {
+                          toast({
+                            title: "Failed to update password",
+                            description: error.message,
+                            variant: "destructive",
+                          });
+                        },
+                      });
+                    })}
+                    className="space-y-4"
+                  >
+                    <FormField
+                      control={passwordForm.control}
+                      name="currentPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormFieldLabel>Current Password</FormFieldLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={passwordForm.control}
+                      name="newPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormFieldLabel>New Password</FormFieldLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={passwordForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormFieldLabel>Confirm Password</FormFieldLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      disabled={changePassword.isPending}
+                    >
+                      {changePassword.isPending ? "Updating..." : "Update Password"}
+                    </Button>
+                  </form>
+                </Form>
               </CardContent>
             </Card>
           </TabsContent>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,56 +8,57 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, UserPlus, MoreVertical, Mail, Shield, Trash2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  empathyScore: number;
-  interactions: number;
-}
-
-const initialUsers: User[] = [
-  { id: 1, name: "Sarah Johnson", email: "sarah.j@company.com", role: "Admin", status: "Active", empathyScore: 92, interactions: 145 },
-  { id: 2, name: "Michael Chen", email: "m.chen@company.com", role: "User", status: "Active", empathyScore: 88, interactions: 98 },
-  { id: 3, name: "Emily Davis", email: "emily.d@company.com", role: "Moderator", status: "Active", empathyScore: 95, interactions: 203 },
-  { id: 4, name: "James Wilson", email: "j.wilson@company.com", role: "User", status: "Inactive", empathyScore: 76, interactions: 45 },
-  { id: 5, name: "Lisa Anderson", email: "l.anderson@company.com", role: "User", status: "Active", empathyScore: 91, interactions: 167 },
-];
+import { useUsers } from "@/hooks/queries/useUsers";
+import { useRoles } from "@/hooks/queries/useRoles";
+import { useCreateUser, createUserSchema, type CreateUserInput } from "@/hooks/mutations/useCreateUser";
 
 export default function Users() {
-  const [users, setUsers] = useState<User[]>(initialUsers);
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("User");
+  const [search, setSearch] = useState("");
   const { toast } = useToast();
+  const { data: users = [], isLoading } = useUsers();
+  const { data: roles = [] } = useRoles();
+  const createUser = useCreateUser();
 
-  const handleAddUser = () => {
-    if (!name.trim() || !email.trim()) {
-      toast({ title: "Validation error", description: "Name and email are required.", variant: "destructive" });
-      return;
-    }
-    const newUser: User = {
-      id: Date.now(),
-      name: name.trim(),
-      email: email.trim(),
-      role,
-      status: "Active",
-      empathyScore: 0,
-      interactions: 0,
-    };
-    setUsers((prev) => [...prev, newUser]);
-    setName("");
-    setEmail("");
-    setRole("User");
-    setOpen(false);
-    toast({ title: "User added", description: `${newUser.name} has been added successfully.` });
+  const form = useForm<CreateUserInput>({
+    resolver: zodResolver(createUserSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      role: "",
+    },
+  });
+
+  const filteredUsers = useMemo(
+    () =>
+      users.filter(
+        (u) =>
+          u.name.toLowerCase().includes(search.toLowerCase()) ||
+          u.email.toLowerCase().includes(search.toLowerCase()),
+      ),
+    [users, search],
+  );
+
+  const handleAddUser = (values: CreateUserInput) => {
+    createUser.mutate(values, {
+      onSuccess: (user) => {
+        toast({ title: "User added", description: `${user.name} has been added successfully.` });
+        form.reset();
+        setOpen(false);
+      },
+      onError: (error) => {
+        toast({
+          title: "Failed to add user",
+          description: error.message,
+          variant: "destructive",
+        });
+      },
+    });
   };
 
   return (
@@ -80,48 +81,115 @@ export default function Users() {
                 <DialogTitle>Add New User</DialogTitle>
                 <DialogDescription>Fill in the details to add a new user to the system.</DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="user-name">Full Name</Label>
-                  <Input id="user-name" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="user-email">Email</Label>
-                  <Input id="user-email" type="email" placeholder="john@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>Role</Label>
-                  <Select value={role} onValueChange={setRole}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Admin">Admin</SelectItem>
-                      <SelectItem value="Moderator">Moderator</SelectItem>
-                      <SelectItem value="User">User</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                <Button onClick={handleAddUser}>Add User</Button>
-              </DialogFooter>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(handleAddUser)}
+                  className="space-y-4 py-4"
+                >
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John Doe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="john@company.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="role"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Role</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {roles.length > 0
+                                ? roles.map((r) => (
+                                    <SelectItem key={r.id} value={r.name}>
+                                      {r.name}
+                                    </SelectItem>
+                                  ))
+                                : (
+                                  <>
+                                    <SelectItem value="Admin">Admin</SelectItem>
+                                    <SelectItem value="Moderator">Moderator</SelectItem>
+                                    <SelectItem value="User">User</SelectItem>
+                                  </>
+                                )}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={createUser.isPending}
+                    >
+                      {createUser.isPending ? "Adding..." : "Add User"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
             </DialogContent>
           </Dialog>
         </div>
 
         <Card>
-          <CardHeader>
+            <CardHeader>
             <CardTitle>All Users</CardTitle>
             <CardDescription>View and manage all users in the system</CardDescription>
             <div className="relative max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Search users..." className="pl-10" />
+                <Input
+                  placeholder="Search users..."
+                  className="pl-10"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
             </div>
           </CardHeader>
           <CardContent>
-            <Table>
+            {isLoading ? (
+              <p className="text-sm text-muted-foreground">Loading users...</p>
+            ) : (
+              <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
@@ -134,7 +202,7 @@ export default function Users() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
@@ -166,6 +234,7 @@ export default function Users() {
                 ))}
               </TableBody>
             </Table>
+            )}
           </CardContent>
         </Card>
       </div>
