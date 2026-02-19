@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Heart, BarChart3, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Heart, BarChart3, Settings, LogOut, Brain } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -18,6 +18,7 @@ const menuItems = [
   { title: "Empathy Tracking", icon: Heart, url: "/empathy-tracking" },
   { title: "Analytics", icon: BarChart3, url: "/analytics" },
   { title: "Users", icon: Users, url: "/users" },
+  { title: "Models", icon: Brain, url: "/models" },
   { title: "Settings", icon: Settings, url: "/settings" },
 ];
 
