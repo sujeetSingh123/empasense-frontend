@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
-import type { AudioApiResponse } from "@/lib/audio-api";
+import { AnalyzeEmotionsResponse } from "@/hooks/mutations/useAnalyzeEmotions";
 
 interface ApiResponsePanelProps {
-  response: AudioApiResponse | null;
+  response: AnalyzeEmotionsResponse | null;
   isLoading: boolean;
 }
 
@@ -22,26 +22,33 @@ export function ApiResponsePanel({ response, isLoading }: ApiResponsePanelProps)
 
   if (!response) return null;
 
+  const isSuccess = response.status === "success";
+  const prediction = response.payload?.prediction;
+
   return (
-    <Card className={response.success ? "border-success/30" : "border-destructive/30"}>
+    <Card className={isSuccess ? "border-success/30" : "border-destructive/30"}>
       <CardHeader className="flex flex-row items-center gap-3 pb-3">
-        {response.success ? (
+        {isSuccess ? (
           <CheckCircle2 className="h-5 w-5 text-success" />
         ) : (
           <XCircle className="h-5 w-5 text-destructive" />
         )}
         <CardTitle className="text-lg">API Response</CardTitle>
-        <Badge variant={response.success ? "default" : "destructive"} className="ml-auto">
-          {response.success ? "Success" : "Error"}
+        <Badge variant={isSuccess ? "default" : "destructive"} className="ml-auto">
+          {isSuccess ? "Success" : "Error"}
         </Badge>
       </CardHeader>
       <CardContent>
-        {response.success ? (
-          <pre className="bg-muted rounded-lg p-4 text-sm overflow-auto max-h-64 text-foreground">
-            {JSON.stringify(response.data, null, 2)}
-          </pre>
+        {isSuccess && prediction ? (
+          <div>
+            <p className="text-base font-medium mb-2">Detected Emotion:</p>
+            <div className="flex items-center gap-4 mb-2">
+              <span className="text-lg font-semibold capitalize">{prediction.detected_emotion}</span>
+              <Badge variant="secondary" className="text-sm">{(prediction.emotion_score * 100).toFixed(1)}%</Badge>
+            </div>
+          </div>
         ) : (
-          <p className="text-destructive text-sm">{response.error}</p>
+          <p className="text-destructive text-sm">{response.message || "An error occurred while analyzing audio."}</p>
         )}
       </CardContent>
     </Card>

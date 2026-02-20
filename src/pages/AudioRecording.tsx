@@ -81,9 +81,9 @@ export default function AudioRecording() {
     analyzeEmotions.mutate(audioBlob, {
       onSuccess: (result) => {
         toast({
-          title: result.success ? "Analysis complete" : "Submission failed",
-          description: result.success ? "API returned a response." : result.error,
-          variant: result.success ? undefined : "destructive",
+          title: result.status ? "Analysis complete" : "Submission failed",
+          description: result.status ? "API returned a response." : "API returned a error",
+          variant: result.status ? undefined : "destructive",
         });
       },
       onError: (error) => {

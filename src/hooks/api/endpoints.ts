@@ -17,5 +17,5 @@ export const currentUserEndpoint = "/auth/me";
 export const changePasswordEndpoint = "/auth/change-password";
 
 // Emotions / analysis
-export const analyzeEmotionsEndpoint = "/emotions/analyze";
+export const analyzeEmotionsEndpoint = "/conversations/audio";
 
