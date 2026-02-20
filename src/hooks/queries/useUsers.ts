@@ -4,13 +4,17 @@ import { usersEndpoint } from "@/hooks/api/endpoints";
 import { getErrorMessage } from "@/utils/error";
 
 export interface User {
-  id: number | string;
-  name: string;
+  id: string;
   email: string;
-  role: string;
+  full_name: string;
+  role_id: string;
+  is_active: boolean;
+}
+
+export interface IUserResponse{
+  message: string;
   status: string;
-  empathyScore: number;
-  interactions: number;
+  payload: User[]
 }
 
 export function useUsers() {
@@ -18,8 +22,8 @@ export function useUsers() {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        // const res = await http.get<User[]>(usersEndpoint);
-        return [];
+        const res = await http.get<IUserResponse>(usersEndpoint);
+        return res.data.payload || [];
       } catch (error: unknown) {
         const message = getErrorMessage(error);
         throw new Error(message || "Unable to fetch users");

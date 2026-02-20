@@ -14,10 +14,12 @@ export type LoginInput = z.infer<typeof loginSchema>;
 
 // Adjust this type to match your backend response shape if needed
 interface LoginResponse {
-  authJwtToken: string;
-  refreshToken: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  user?: any;
+  message: string;
+  status: string;
+  payload: {
+    access_token: string;
+    token_type: string;
+  };
 }
 
 export function useLogin() {
@@ -41,12 +43,12 @@ export function useLogin() {
         );
 
         // Persist tokens for subsequent requests
-        if (res.data?.authJwtToken) {
-          setToken(res.data.authJwtToken);
+        if (res.data?.payload?.access_token) {
+          setToken(res.data?.payload?.access_token);
         }
-        if (res.data?.refreshToken) {
-          setRefreshToken(res.data.refreshToken);
-        }
+        // if (res.data?.refreshToken) {
+        //   setRefreshToken(res.data.refreshToken);
+        // }
 
         return res.data;
       } catch (error: unknown) {

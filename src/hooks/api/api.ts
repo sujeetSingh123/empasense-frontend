@@ -26,6 +26,20 @@ export function authHeader() {
 	return idToken
 }
 
+http.interceptors.request.use(
+	(config) => {
+		const token = authHeader()
+		if (token) {
+			config.headers['Authorization'] = 'Bearer ' + token
+		}
+
+		return config
+	},
+	(error) => {
+		Promise.reject(error)
+	}
+)
+
 
 
 http.interceptors.response.use(
@@ -41,8 +55,8 @@ http.interceptors.response.use(
 		// getRefreshToken();
 		if (error?.response?.status === 401 ) {
 			// clearStorage();
-			// window.location.href = '/';
-			await getRefreshToken(error, http)
+			window.location.href = '/login';
+			// await getRefreshToken(error, http)
 		}
 		// window.location.href = '/';
 
@@ -91,14 +105,14 @@ export const getRefreshToken = async (
 			// handle axios-like error - if refresh token fails, logout the user
 			// Logout on any error (401, network error, etc.) when refresh token fails
 			clearStorage()
-			window.location.href = '/'
+			// window.location.href = '/'
 			const message = getErrorMessage(error)
 			throw new Error(message || 'Unable to complete request')
 		}
 	} else {
 		// No refresh token available, logout the user
 		clearStorage()
-		window.location.href = '/'
+		// window.location.href = '/'
 	}
 }
 

@@ -14,9 +14,9 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 const menuItems = [
-  { title: "Dashboard", icon: LayoutDashboard, url: "/dashboard" },
-  { title: "Empathy Tracking", icon: Heart, url: "/empathy-tracking" },
-  { title: "Analytics", icon: BarChart3, url: "/analytics" },
+  // { title: "Dashboard", icon: LayoutDashboard, url: "/dashboard" },
+  // { title: "Empathy Analytics", icon: Heart, url: "/empathy-tracking" },
+  { title: "Empathy Analytics", icon: BarChart3, url: "/analytics" },
   { title: "Users", icon: Users, url: "/users" },
   { title: "Models", icon: Brain, url: "/models" },
   { title: "Settings", icon: Settings, url: "/settings" },
